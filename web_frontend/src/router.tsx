@@ -23,10 +23,10 @@ export const router = createBrowserRouter([
       { path: "book/:id", element: <BookDetail /> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
+      { path: "cart", element: <Cart /> },
       {
         element: <ProtectedRoute />,
         children: [
-          { path: "cart", element: <Cart /> },
           { path: "checkout", element: <Checkout /> },
           { path: "orders", element: <Orders /> },
           { path: "orders/:id", element: <OrderDetail /> },

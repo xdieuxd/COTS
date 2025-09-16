@@ -1,5 +1,5 @@
 import client from "./axiosClient";
-import type { LoginReq, LoginRes, Profile } from "@types/auth";
+import type { LoginReq, LoginRes, Profile } from "@mytypes/auth";
 
 export const authApi = {
   register: (body: { hoTen: string; email: string; matKhau: string }) =>

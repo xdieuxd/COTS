@@ -1,5 +1,5 @@
 import client from "./axiosClient";
-import type { CartItem, Order, OrderDetail } from "@types/order";
+import type { CartItem, Order, OrderDetail } from "@mytypes/order";
 
 export const orderApi = {
   getCart: () => client.get<{ items: CartItem[] }>("/don-hang/member/gio-hang"),

@@ -1,5 +1,5 @@
 import client from "./axiosClient";
-import type { Book, BookDetail } from "@types/book";
+import type { Book, BookDetail } from "@mytypes/book";
 
 export const catalogApi = {
   list: (params: { the_loai?: string; trang?: number; sap_xep?: string }) =>

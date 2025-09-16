@@ -1,20 +1,47 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "jsx": "react-jsx",
     "moduleResolution": "Bundler",
     "strict": true,
+    "esModuleInterop": true, // thêm để import Node built-in dễ hơn
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true, // tránh lỗi type từ node_modules
     "baseUrl": "./src",
     "paths": {
-      "@api/*": ["api/*"],
-      "@pages/*": ["pages/*"],
-      "@components/*": ["components/*"],
-      "@hooks/*": ["hooks/*"],
-      "@types/*": ["types/*"],
-      "@context/*": ["context/*"]
-    }
+      "@api/*": [
+        "api/*"
+      ],
+      "@pages/*": [
+        "pages/*"
+      ],
+      "@components/*": [
+        "components/*"
+      ],
+      "@hooks/*": [
+        "hooks/*"
+      ],
+      "@mytypes/*": [
+        "types/*"
+      ],
+      "@context/*": [
+        "context/*"
+      ],
+      "@routes/*": [
+        "routes/*"
+      ]
+    },
+    "types": [
+      "node"
+    ] // thêm để TypeScript nhận Node modules như 'path'
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

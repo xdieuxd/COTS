@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import type { Book } from "@types/book";
+import type { Book } from "@mytypes/book";
 
 export default function BookCard({ id, tieuDe, gia, anh }: Book) {
   return (

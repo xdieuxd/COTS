@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { authApi } from "@api/authApi";
-import type { Profile } from "@types/auth";
+import type { Profile } from "@mytypes/auth";
 
 type AuthCtx = {
   user: Profile | null;
