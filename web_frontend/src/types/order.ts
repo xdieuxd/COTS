@@ -1,16 +1,22 @@
-export interface CartItem {
-  ma_sach: number;
-  ten_sach: string;
-  so_luong: number;
-  don_gia: number;
+export interface ItemCart {
+  id: number;
+  name: string;
+  price: number;
+  qty: number;
+  img: string,
+  isChecked: boolean
 }
 export interface Order {
   ma_don_hang: number;
-  trang_thai: string;
-  tong_tien: number;
-  ngay_tao: string;
+  name: string,
+  status: string;
+  total_price: number;
+  create_day: string;
 }
 export interface OrderDetail extends Order {
-  items: CartItem[];
+  items: ItemCart[];
   paymentRef?: string;
 }
+
+export interface CheckoutData extends ItemCart { }
+

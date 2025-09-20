@@ -6,7 +6,7 @@ export default function Header() {
   return (
     <header
       className="h-[60px] flex items-center fixed w-full bg-white text-black 
-    dark:bg-gray-900 dark:text-white z-50 shadow-lg dark:shadow-white/5 text-lg"
+    dark:bg-gray-900 dark:text-white z-50 shadow-sm dark:shadow-lg dark:shadow-white/5 text-lg"
     >
       <div className="container mx-auto p-3 flex gap-4 items-center">
         <Link to="/">BookNest</Link>

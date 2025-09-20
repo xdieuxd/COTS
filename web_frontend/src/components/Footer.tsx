@@ -13,13 +13,13 @@ const Footer = () => {
                 <span>2025 BookNest All rights reserved</span>
             </div>
             <div className="flex gap-2 text-2xl mb-2">
-                <a href="" className="hover:scale-120 transition-all duration-300">
+                <a href="#" className="hover:scale-120 transition-all duration-300">
                     <FontAwesomeIcon icon={faFacebook} />
                 </a>
-                <a href="" className="hover:scale-120 transition-all duration-300">
+                <a href="#" className="hover:scale-120 transition-all duration-300">
                     <FontAwesomeIcon icon={faYoutube} />
                 </a>
-                <a href="" className="hover:scale-120 transition-all duration-300">
+                <a href="#" className="hover:scale-120 transition-all duration-300">
                     <FontAwesomeIcon icon={faTwitter} />
                 </a>
             </div>
