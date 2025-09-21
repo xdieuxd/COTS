@@ -20,3 +20,9 @@ export interface OrderDetail extends Order {
 
 export interface CheckoutData extends ItemCart { }
 
+export interface AddressData {
+  name: string;
+  phone: string;
+  address: string;
+}
+

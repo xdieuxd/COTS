@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AddressPopup from "@components/AddressPopup";
 
 interface User {
     username: string;
@@ -6,7 +7,7 @@ interface User {
     email: string;
     phone: string;
     address: string;
-    avatar: string; // thêm avatar ở đây
+    avatar: string;
 }
 
 const Profile = () => {
@@ -15,7 +16,6 @@ const Profile = () => {
         { label: "Tên", key: "name" },
         { label: "Email", key: "email" },
         { label: "Số điện thoại", key: "phone" },
-        { label: "Địa chỉ", key: "address" },
     ];
 
     const [user, setUser] = useState<User>({
@@ -26,6 +26,8 @@ const Profile = () => {
         address: "77 Mai Xuân Thưởng, Phường Hòa Khê, Quận Thanh Khê, Đà Nẵng",
         avatar: "",
     });
+
+    const [showAddressPopup, setShowAddressPopup] = useState(false);
 
     return (
         <div className="px-4 border border-gray-300 bg-white text-gray-900 shadow-sm rounded">
@@ -38,15 +40,15 @@ const Profile = () => {
 
             <div className="mt-6 grid grid-cols-12 gap-3">
                 {/* Form bên trái */}
-                <div className="flex items-center flex-col border-r col-span-8 border-gray-300">
+                <div className="flex items-start flex-col border-r col-span-8 border-gray-300 w-full">
                     {fields.map((field) => (
                         <div
-                            className="flex items-center gap-2 mb-4"
+                            className="flex items-center gap-2 mb-4 w-full"
                             key={field.key}
                         >
                             <span className="w-32 text-gray-400">{field.label}</span>
                             <input
-                                className="w-sm border border-gray-300 rounded-sm outline-0 p-2"
+                                className="flex-1 border border-gray-300 rounded-sm outline-0 p-2"
                                 value={user[field.key as keyof User]}
                                 onChange={(e) =>
                                     setUser({ ...user, [field.key]: e.target.value })
@@ -54,6 +56,23 @@ const Profile = () => {
                             />
                         </div>
                     ))}
+
+                    {/* Địa chỉ */}
+                    <div className="flex items-center gap-2 mb-2 w-full">
+                        <span className="w-32 text-gray-400">Địa chỉ</span>
+                        <input
+                            className="flex-1 border border-gray-300 rounded-sm outline-0 p-2"
+                            value={user.address}
+                            onChange={(e) => setUser({ ...user, address: e.target.value })}
+                        />
+                    </div>
+                    <button
+                        type="button"
+                        className="ml-32 mb-4 px-3 py-2 bg-gray-900 text-white rounded hover:-translate-y-1 transition-all duration-300"
+                        onClick={() => setShowAddressPopup(true)}
+                    >
+                        Thêm địa chỉ
+                    </button>
 
                     <button className="w-20 mb-4 px-6 py-2 border rounded bg-gray-900 text-white hover:-translate-y-1 transition-all duration-300 cursor-pointer">
                         Lưu
@@ -91,6 +110,23 @@ const Profile = () => {
                     </label>
                 </div>
             </div>
+
+            {/* Popup chọn địa chỉ */}
+            {showAddressPopup && (
+                <AddressPopup
+                    isOpen={showAddressPopup}
+                    onClose={() => setShowAddressPopup(false)}
+                    onSave={(data) => {
+                        setUser({
+                            ...user,
+                            name: data.name,
+                            phone: data.phone,
+                            address: data.address,
+                        });
+                        setShowAddressPopup(false);
+                    }}
+                />
+            )}
         </div>
     );
 };
