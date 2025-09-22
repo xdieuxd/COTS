@@ -25,6 +25,13 @@ Chạy nhanh (Local – H2 mặc định)
 3) Chạy: `java -jar target/catalog-0.0.1-SNAPSHOT.jar`
 4) Ứng dụng chạy tại: http://localhost:8082
 
+Tuỳ chọn khác để chạy
+- Maven trực tiếp: `mvn spring-boot:run`
+- Ghi đè biến môi trường khi cần MySQL:
+  `setx SPRING_DATASOURCE_URL "jdbc:mysql://localhost:3306/danh_muc_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC"`
+  (mở terminal mới), sau đó `mvn spring-boot:run`
+- PowerShell 1 dòng: `mvn -DskipTests package; java -jar target/catalog-0.0.1-SNAPSHOT.jar`
+
 Chuyển sang MySQL
 Thiết lập biến môi trường:
 - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-catalog:3306/danh_muc_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
@@ -67,4 +74,9 @@ Lỗi thường gặp & cách xử lý
 - Lỗi đọc cấu hình (InvalidPropertiesFormatException): đảm bảo chỉ còn `application.yml` (đã xoá `application.xml`).
 - Lỗi MinIO: kiểm tra endpoint/credential, bucket tồn tại; xem log `StorageService`.
 - Lỗi DB: kiểm tra biến môi trường SPRING_DATASOURCE_* hoặc dùng mặc định H2 khi dev.
+
+Chạy bằng Docker Compose (chỉ catalog + MySQL catalog)
+- Sử dụng `infra/docker-compose.yml` và chỉ định service cần chạy:
+  `docker compose -f infra/docker-compose.yml up -d mysql-catalog catalog`
+- Kiểm tra log: `docker logs -f catalog`
 

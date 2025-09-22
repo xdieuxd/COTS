@@ -26,6 +26,15 @@ Chạy nhanh (Local – H2 mặc định)
 3) Chạy: `java -jar target/auth-0.0.1-SNAPSHOT.jar`
 4) Ứng dụng chạy tại: http://localhost:8081
 
+Tuỳ chọn khác để chạy
+- Chạy trực tiếp bằng Maven (không cần tạo jar):
+  `mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Xms256m -Xmx512m"`
+- Chạy theo profile hoặc ghi đè biến môi trường:
+  `setx SPRING_DATASOURCE_URL "jdbc:mysql://localhost:3306/xac_thuc_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC"`
+  (mở terminal mới để nhận env) rồi `mvn spring-boot:run`
+- PowerShell, chạy nhanh trong 1 dòng:
+  `mvn -DskipTests package; java -jar target/auth-0.0.1-SNAPSHOT.jar`
+
 Chuyển sang MySQL (Docker hoặc máy thật)
 Thiết lập biến môi trường (ví dụ dùng Docker Compose hoặc Windows PowerShell `setx`):
 - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-auth:3306/xac_thuc_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
@@ -66,6 +75,11 @@ Kiểm thử nhanh (cURL)
   `curl -X POST http://localhost:8081/api/auth/register -H "Content-Type: application/json" -d "{\"email\":\"a@a.com\",\"password\":\"123456\",\"fullName\":\"A\"}"`
 - Đăng nhập:
   `curl -X POST http://localhost:8081/api/auth/login -H "Content-Type: application/json" -d "{\"email\":\"a@a.com\",\"password\":\"123456\"}"`
+
+Chạy bằng Docker Compose (chỉ auth + MySQL auth)
+- Tạo file `infra/docker-compose.auth.yml` (ví dụ) hoặc dùng `infra/docker-compose.yml` hiện có và comment các service khác.
+- Chạy: `docker compose -f infra/docker-compose.yml up -d mysql-auth auth`
+- Kiểm tra log: `docker logs -f auth`
 
 Lỗi thường gặp & cách xử lý
 - Không tải được MySQL driver: đảm bảo `com.mysql:mysql-connector-j:8.0.33` trong pom.xml.
