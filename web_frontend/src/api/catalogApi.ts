@@ -1,8 +1,11 @@
-import client from "./axiosClient";
-import type { Book, BookDetail } from "@mytypes/book";
+import axiosClient from "./axiosClient";
 
 export const catalogApi = {
-  list: (params: { the_loai?: string; trang?: number; sap_xep?: string }) =>
-    client.get<{ items: Book[]; total: number }>("/danh-muc/sach", { params }),
-  detail: (id: number) => client.get<BookDetail>(`/danh-muc/sach/${id}`),
+  getFeatured: () => axiosClient.get("/api/catalog/home/featured"),
+
+  getNewest: (page = 0, size = 12) =>
+    axiosClient.get("/api/catalog/home/newest", { params: { page, size } }),
+
+  getFree: (page = 0, size = 12) =>
+    axiosClient.get("/api/catalog/home/free", { params: { page, size } }),
 };

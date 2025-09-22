@@ -1,0 +1,61 @@
+server:
+  port: 8080
+
+spring:
+  main:
+    web-application-type: reactive
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      routes:
+        - id: auth
+          uri: http://auth:8081
+          predicates:
+            - Path=/api/auth/**
+
+        - id: catalog
+          uri: http://catalog:8080
+          predicates:
+            - Path=/api/catalog/**
+
+        - id: search
+          uri: http://search:8083
+          predicates:
+            - Path=/api/search/**
+
+        - id: storage
+          uri: http://storage:8084
+          predicates:
+            - Path=/api/storage/**
+
+        - id: order
+          uri: http://order:8085
+          predicates:
+            - Path=/api/order/**
+
+        - id: payment
+          uri: http://payment:8086
+          predicates:
+            - Path=/api/payment/**
+
+        - id: library
+          uri: http://library:8087
+          predicates:
+            - Path=/api/library/**
+
+        - id: review
+          uri: http://review:8080
+          predicates:
+            - Path=/api/review/**
+
+      # CORS toàn cục (cho FE tại 5173)
+      globalcors:
+        corsConfigurations:
+          "[/**]":
+            allowedOrigins:
+              - "http://localhost:5173"
+              - "http://127.0.0.1:5173"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true

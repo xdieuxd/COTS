@@ -1,145 +1,356 @@
-version: "3.9"
-services:
-  gateway:
-    build: ../gateway
-    container_name: gateway
-    ports: ["8080:8080"]
-    depends_on: [auth, catalog, search, storage, order, payment, library]
-    networks: [booknest]
+name: ${PROJECT_NAME}
 
+services:
+  # ---------- MySQL group ----------
+  mysql-auth:
+    image: ${MYSQL_IMAGE}
+    container_name: mysql-auth
+    environment:
+      TZ: ${TZ}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_AUTH}
+      MYSQL_USER: ${AUTH_DB_USER}
+      MYSQL_PASSWORD: ${AUTH_DB_PASS}
+    command:
+      [
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_vi_0900_ai_ci",
+        "--default-time-zone=+00:00",
+      ]
+    volumes:
+      - auth_data:/var/lib/mysql
+      - ../services/auth/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
+    ports:
+      - "33061:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks: [booknest]
+    restart: unless-stopped
+    # platform: linux/amd64  # bật nếu dùng Mac ARM và gặp lỗi
+
+  mysql-catalog:
+    image: ${MYSQL_IMAGE}
+    container_name: mysql-catalog
+    environment:
+      TZ: ${TZ}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_CATALOG}
+      MYSQL_USER: ${CATALOG_DB_USER}
+      MYSQL_PASSWORD: ${CATALOG_DB_PASS}
+    command:
+      [
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_vi_0900_ai_ci",
+        "--default-time-zone=+00:00",
+      ]
+    volumes:
+      - catalog_data:/var/lib/mysql
+      - ../services/catalog/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
+    ports:
+      - "33062:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks: [booknest]
+    restart: unless-stopped
+
+  mysql-search:
+    image: ${MYSQL_IMAGE}
+    container_name: mysql-search
+    environment:
+      TZ: ${TZ}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_SEARCH}
+      MYSQL_USER: ${SEARCH_DB_USER}
+      MYSQL_PASSWORD: ${SEARCH_DB_PASS}
+    command:
+      [
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_vi_0900_ai_ci",
+        "--default-time-zone=+00:00",
+      ]
+    volumes:
+      - search_data:/var/lib/mysql
+      - ../services/search/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
+    ports:
+      - "33063:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks: [booknest]
+    restart: unless-stopped
+
+  mysql-order:
+    image: ${MYSQL_IMAGE}
+    container_name: mysql-order
+    environment:
+      TZ: ${TZ}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_ORDER}
+      MYSQL_USER: ${ORDER_DB_USER}
+      MYSQL_PASSWORD: ${ORDER_DB_PASS}
+    command:
+      [
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_vi_0900_ai_ci",
+        "--default-time-zone=+00:00",
+      ]
+    volumes:
+      - order_data:/var/lib/mysql
+      - ../services/order/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
+    ports:
+      - "33064:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks: [booknest]
+    restart: unless-stopped
+
+  mysql-payment:
+    image: ${MYSQL_IMAGE}
+    container_name: mysql-payment
+    environment:
+      TZ: ${TZ}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_PAYMENT}
+      MYSQL_USER: ${PAYMENT_DB_USER}
+      MYSQL_PASSWORD: ${PAYMENT_DB_PASS}
+    command:
+      [
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_vi_0900_ai_ci",
+        "--default-time-zone=+00:00",
+      ]
+    volumes:
+      - payment_data:/var/lib/mysql
+      - ../services/payment/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
+    ports:
+      - "33065:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks: [booknest]
+    restart: unless-stopped
+
+  mysql-library:
+    image: ${MYSQL_IMAGE}
+    container_name: mysql-library
+    environment:
+      TZ: ${TZ}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_LIBRARY}
+      MYSQL_USER: ${LIBRARY_DB_USER}
+      MYSQL_PASSWORD: ${LIBRARY_DB_PASS}
+    command:
+      [
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_vi_0900_ai_ci",
+        "--default-time-zone=+00:00",
+      ]
+    volumes:
+      - library_data:/var/lib/mysql
+      - ../services/library/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
+    ports:
+      - "33066:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks: [booknest]
+    restart: unless-stopped
+
+  mysql-review:
+    image: ${MYSQL_IMAGE}
+    container_name: mysql-review
+    environment:
+      TZ: ${TZ}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_REVIEW}
+      MYSQL_USER: ${REVIEW_DB_USER}
+      MYSQL_PASSWORD: ${REVIEW_DB_PASS}
+    command:
+      [
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_vi_0900_ai_ci",
+        "--default-time-zone=+00:00",
+      ]
+    volumes:
+      - review_data:/var/lib/mysql
+      - ../services/review/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
+    ports:
+      - "33067:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks: [booknest]
+    restart: unless-stopped
+
+  # ---------- Java services ----------
   auth:
     build: ../services/auth
     container_name: auth
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-auth:3306/xac_thuc_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-    depends_on: [mysql-auth]
+      TZ: ${TZ}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-auth:3306/${DB_AUTH}?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: ${AUTH_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${AUTH_DB_PASS}
+    depends_on:
+      mysql-auth:
+        condition: service_healthy
     networks: [booknest]
-
-  mysql-auth:
-    image: mysql:8.0
-    container_name: mysql-auth
-    environment: [MYSQL_ROOT_PASSWORD=root]
-    volumes:
-      - auth_data:/var/lib/mysql
-      - ../services/auth/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
-    networks: [booknest]
+    restart: unless-stopped
 
   catalog:
     build: ../services/catalog
     container_name: catalog
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-catalog:3306/danh_muc_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-    depends_on: [mysql-catalog]
+      TZ: ${TZ}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-catalog:3306/${DB_CATALOG}?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: ${CATALOG_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${CATALOG_DB_PASS}
+    depends_on:
+      mysql-catalog:
+        condition: service_healthy
     networks: [booknest]
-
-  mysql-catalog:
-    image: mysql:8.0
-    container_name: mysql-catalog
-    environment: [MYSQL_ROOT_PASSWORD=root]
-    volumes:
-      - catalog_data:/var/lib/mysql
-      - ../services/catalog/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
-    networks: [booknest]
+    restart: unless-stopped
 
   search:
     build: ../services/search
     container_name: search
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-search:3306/tim_kiem_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-    depends_on: [mysql-search]
+      TZ: ${TZ}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-search:3306/${DB_SEARCH}?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: ${SEARCH_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${SEARCH_DB_PASS}
+    depends_on:
+      mysql-search:
+        condition: service_healthy
     networks: [booknest]
-
-  mysql-search:
-    image: mysql:8.0
-    container_name: mysql-search
-    environment: [MYSQL_ROOT_PASSWORD=root]
-    volumes:
-      - search_data:/var/lib/mysql
-      - ../services/search/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
-    networks: [booknest]
-
-  storage:
-    build: ../services/storage
-    container_name: storage
-    environment:
-      UPLOAD_DIR: /uploads
-    volumes:
-      - storage_uploads:/uploads
-    networks: [booknest]
+    restart: unless-stopped
 
   order:
     build: ../services/order
     container_name: order
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-order:3306/don_hang_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-    depends_on: [mysql-order]
+      TZ: ${TZ}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-order:3306/${DB_ORDER}?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: ${ORDER_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${ORDER_DB_PASS}
+    depends_on:
+      mysql-order:
+        condition: service_healthy
     networks: [booknest]
-
-  mysql-order:
-    image: mysql:8.0
-    container_name: mysql-order
-    environment: [MYSQL_ROOT_PASSWORD=root]
-    volumes:
-      - order_data:/var/lib/mysql
-      - ../services/order/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
-    networks: [booknest]
+    restart: unless-stopped
 
   payment:
     build: ../services/payment
     container_name: payment
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-payment:3306/thanh_toan_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-    depends_on: [mysql-payment]
+      TZ: ${TZ}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-payment:3306/${DB_PAYMENT}?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: ${PAYMENT_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${PAYMENT_DB_PASS}
+    depends_on:
+      mysql-payment:
+        condition: service_healthy
     networks: [booknest]
-
-  mysql-payment:
-    image: mysql:8.0
-    container_name: mysql-payment
-    environment: [MYSQL_ROOT_PASSWORD=root]
-    volumes:
-      - payment_data:/var/lib/mysql
-      - ../services/payment/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
-    networks: [booknest]
+    restart: unless-stopped
 
   library:
     build: ../services/library
     container_name: library
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-library:3306/thu_vien_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-    depends_on: [mysql-library]
+      TZ: ${TZ}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-library:3306/${DB_LIBRARY}?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: ${LIBRARY_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${LIBRARY_DB_PASS}
+    depends_on:
+      mysql-library:
+        condition: service_healthy
     networks: [booknest]
+    restart: unless-stopped
 
-  mysql-library:
-    image: mysql:8.0
-    container_name: mysql-library
-    environment: [MYSQL_ROOT_PASSWORD=root]
+  storage:
+    build: ../services/storage
+    container_name: storage
+    environment:
+      TZ: ${TZ}
+      UPLOAD_DIR: ${STORAGE_UPLOAD_DIR}
     volumes:
-      - library_data:/var/lib/mysql
-      - ../services/library/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
+      - storage_uploads:/uploads
     networks: [booknest]
+    restart: unless-stopped
+
+  review:
+    build: ../services/review
+    container_name: review
+    environment:
+      TZ: ${TZ}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-review:3306/${DB_REVIEW}?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: ${REVIEW_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${REVIEW_DB_PASS}
+    depends_on:
+      mysql-review:
+        condition: service_healthy
+    networks: [booknest]
+    restart: unless-stopped
+
+  # ---------- Gateway & Frontend ----------
+  gateway:
+    build: ../gateway
+    container_name: gateway
+    environment:
+      TZ: ${TZ}
+    ports:
+      - "${GATEWAY_PORT}:8080"
+    depends_on:
+      auth:
+        condition: service_started
+      catalog:
+        condition: service_started
+      search:
+        condition: service_started
+      storage:
+        condition: service_started
+      order:
+        condition: service_started
+      payment:
+        condition: service_started
+      library:
+        condition: service_started
+      review:
+        condition: service_started
+    networks: [booknest]
+    restart: unless-stopped
 
   web-frontend:
-    build: ../web-frontend
+    build: ../web_frontend
     container_name: web-frontend
     environment:
-      - VITE_API_BASE=http://localhost:8080
-    ports: ["5173:5173"]
+      TZ: ${TZ}
+      VITE_API_BASE: http://localhost:${GATEWAY_PORT}
+    ports:
+      - "${WEB_PORT}:5173"
     networks: [booknest]
+    restart: unless-stopped
 
 networks:
-  booknest: {}
+  booknest:
+    name: ${NETWORK_NAME}
 
 volumes:
   auth_data: {}
@@ -149,3 +360,4 @@ volumes:
   payment_data: {}
   library_data: {}
   storage_uploads: {}
+  review_data: {}

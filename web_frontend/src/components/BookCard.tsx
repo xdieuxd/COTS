@@ -1,19 +1,27 @@
-import { Link } from "react-router-dom";
-import type { Book } from "@mytypes/book";
+import type { BookCard as BookCardType } from "@mytypes/book";
 
-export default function BookCard({ id, tieuDe, gia, anh }: Book) {
+type Props = {
+  book: BookCardType;
+  onClick?: () => void;
+};
+
+export default function BookCard({ book, onClick }: Props) {
+  const isFree = !book.gia || Number(book.gia) === 0;
+
   return (
-    <div className="border p-3 rounded">
-      {anh && (
+    <div className="book-item" onClick={onClick}>
+      <div className="book-img-container">
         <img
-          src={anh}
-          alt={tieuDe}
-          style={{ width: "100%", height: 180, objectFit: "cover" }}
+          className="book-img"
+          src={book.anh ?? "https://via.placeholder.com/300x400?text=No+Image"}
+          alt={book.tieuDe}
         />
-      )}
-      <h3 className="mt-2 font-semibold">{tieuDe}</h3>
-      <p>{gia?.toLocaleString()} đ</p>
-      <Link to={`/book/${id}`}>Xem chi tiết</Link>
+        <span className={`price-badge ${isFree ? "free" : "paid"}`}>
+          {isFree ? "FREE" : `${Number(book.gia).toLocaleString()}đ`}
+        </span>
+      </div>
+
+      <h3 className="book_title">{book.tieuDe}</h3>
     </div>
   );
 }
