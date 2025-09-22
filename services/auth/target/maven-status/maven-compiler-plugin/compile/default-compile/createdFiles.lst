@@ -1,0 +1,4 @@
+com\booknest\auth\controller\AuthController.class
+com\booknest\auth\model\User.class
+com\booknest\auth\repo\UserRepository.class
+com\booknest\auth\security\JwtUtil.class

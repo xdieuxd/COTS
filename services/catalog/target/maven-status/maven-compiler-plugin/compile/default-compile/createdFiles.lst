@@ -1,0 +1,4 @@
+com\booknest\catalog\repo\BookRepository.class
+com\booknest\catalog\controller\BookController.class
+com\booknest\catalog\service\StorageService.class
+com\booknest\catalog\model\Book.class
