@@ -9,7 +9,7 @@ public class MucThuVien {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // tương ứng cột id bigint auto_increment
+    private Long id;
 
     @Column(name = "ma_nguoi_dung", nullable = false)
     private Long maNguoiDung;
@@ -24,7 +24,7 @@ public class MucThuVien {
     @Column(name = "cho_phep_doc_pdf", nullable = false)
     private Boolean choPhepDocPdf = false;
 
-    @Column(name = "ngay_them", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "ngay_them", nullable = false)
     private LocalDateTime ngayThem;
 
     public enum LoaiMuc {
@@ -78,5 +78,13 @@ public class MucThuVien {
 
     public void setNgayThem(LocalDateTime ngayThem) {
         this.ngayThem = ngayThem;
+    }
+
+    // --- Tự động set ngày thêm khi persist ---
+    @PrePersist
+    protected void onCreate() {
+        if (ngayThem == null) {
+            ngayThem = LocalDateTime.now();
+        }
     }
 }
