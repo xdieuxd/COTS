@@ -48,7 +48,6 @@
 
 		<!-- Spring Boot Starter Data JPA -->
 
-
 		<!-- Driver MySQL (nếu dùng MySQL) -->
 		<dependency>
 			<groupId>com.mysql</groupId>
