@@ -1,0 +1,31 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: booknest-gateway
+  cloud:
+    gateway:
+      default-filters:
+        - RemoveRequestHeader=Cookie
+      routes:
+        - id: auth
+          uri: http://auth:8081
+          predicates: [ Path=/xac-thuc/** ]
+        - id: catalog
+          uri: http://catalog:8082
+          predicates: [ Path=/danh-muc/** ]
+        - id: search
+          uri: http://search:8083
+          predicates: [ Path=/tim-kiem/** ]
+        - id: storage
+          uri: http://storage:8084
+          predicates: [ Path=/luu-tru/** ]
+        - id: order
+          uri: http://order:8085
+          predicates: [ Path=/don-hang/** ]
+        - id: payment
+          uri: http://payment:8086
+          predicates: [ Path=/thanh-toan/** ]
+        - id: library
+          uri: http://library:8087
+          predicates: [ Path=/thu-vien/** ]
