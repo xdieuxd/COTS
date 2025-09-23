@@ -1,12 +1,26 @@
-version: "3.9"
-services:
-  gateway:
-    build: ../gateway
-    container_name: gateway
-    ports: ["8080:8080"]
-    depends_on: [auth, catalog, search, storage, order, payment, library]
-    networks: [booknest]
+# version: "3.9"
 
+services:
+  # Gateway
+  gateway:
+    build:
+      context: ..      # trỏ lên root project COTS
+      dockerfile: gateway/Dockerfile
+    container_name: gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth
+      - catalog
+      - search
+      - storage
+      - order
+      - payment
+      - library
+    networks:
+      - booknest
+
+  # Auth Service
   auth:
     build: ../services/auth
     container_name: auth
@@ -14,18 +28,23 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-auth:3306/xac_thuc_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-    depends_on: [mysql-auth]
-    networks: [booknest]
+    depends_on:
+      - mysql-auth
+    networks:
+      - booknest
 
   mysql-auth:
     image: mysql:8.0
     container_name: mysql-auth
-    environment: [MYSQL_ROOT_PASSWORD=root]
+    environment:
+      MYSQL_ROOT_PASSWORD: root
     volumes:
       - auth_data:/var/lib/mysql
       - ../services/auth/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
-    networks: [booknest]
+    networks:
+      - booknest
 
+  # Catalog Service
   catalog:
     build: ../services/catalog
     container_name: catalog
@@ -33,18 +52,23 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-catalog:3306/danh_muc_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-    depends_on: [mysql-catalog]
-    networks: [booknest]
+    depends_on:
+      - mysql-catalog
+    networks:
+      - booknest
 
   mysql-catalog:
     image: mysql:8.0
     container_name: mysql-catalog
-    environment: [MYSQL_ROOT_PASSWORD=root]
+    environment:
+      MYSQL_ROOT_PASSWORD: root
     volumes:
       - catalog_data:/var/lib/mysql
       - ../services/catalog/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
-    networks: [booknest]
+    networks:
+      - booknest
 
+  # Search Service
   search:
     build: ../services/search
     container_name: search
@@ -52,18 +76,23 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-search:3306/tim_kiem_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-    depends_on: [mysql-search]
-    networks: [booknest]
+    depends_on:
+      - mysql-search
+    networks:
+      - booknest
 
   mysql-search:
     image: mysql:8.0
     container_name: mysql-search
-    environment: [MYSQL_ROOT_PASSWORD=root]
+    environment:
+      MYSQL_ROOT_PASSWORD: root
     volumes:
       - search_data:/var/lib/mysql
       - ../services/search/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
-    networks: [booknest]
+    networks:
+      - booknest
 
+  # Storage Service
   storage:
     build: ../services/storage
     container_name: storage
@@ -71,8 +100,12 @@ services:
       UPLOAD_DIR: /uploads
     volumes:
       - storage_uploads:/uploads
-    networks: [booknest]
+    ports:
+      - "8085:8085"
+    networks:
+      - booknest
 
+  # Order Service
   order:
     build: ../services/order
     container_name: order
@@ -80,18 +113,23 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-order:3306/don_hang_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-    depends_on: [mysql-order]
-    networks: [booknest]
+    depends_on:
+      - mysql-order
+    networks:
+      - booknest
 
   mysql-order:
     image: mysql:8.0
     container_name: mysql-order
-    environment: [MYSQL_ROOT_PASSWORD=root]
+    environment:
+      MYSQL_ROOT_PASSWORD: root
     volumes:
       - order_data:/var/lib/mysql
       - ../services/order/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
-    networks: [booknest]
+    networks:
+      - booknest
 
+  # Payment Service
   payment:
     build: ../services/payment
     container_name: payment
@@ -99,18 +137,23 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-payment:3306/thanh_toan_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-    depends_on: [mysql-payment]
-    networks: [booknest]
+    depends_on:
+      - mysql-payment
+    networks:
+      - booknest
 
   mysql-payment:
     image: mysql:8.0
     container_name: mysql-payment
-    environment: [MYSQL_ROOT_PASSWORD=root]
+    environment:
+      MYSQL_ROOT_PASSWORD: root
     volumes:
       - payment_data:/var/lib/mysql
       - ../services/payment/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
-    networks: [booknest]
+    networks:
+      - booknest
 
+  # Library Service
   library:
     build: ../services/library
     container_name: library
@@ -118,34 +161,41 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-library:3306/thu_vien_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-    depends_on: [mysql-library]
-    networks: [booknest]
+    depends_on:
+      - mysql-library
+    networks:
+      - booknest
 
   mysql-library:
     image: mysql:8.0
     container_name: mysql-library
-    environment: [MYSQL_ROOT_PASSWORD=root]
+    environment:
+      MYSQL_ROOT_PASSWORD: root
     volumes:
       - library_data:/var/lib/mysql
       - ../services/library/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
-    networks: [booknest]
+    networks:
+      - booknest
 
+  # Frontend
   web-frontend:
-    build: ../web-frontend
+    build: ../web_frontend
     container_name: web-frontend
     environment:
       - VITE_API_BASE=http://localhost:8080
-    ports: ["5173:5173"]
-    networks: [booknest]
+    ports:
+      - "5173:5173"
+    networks:
+      - booknest
 
 networks:
-  booknest: {}
+  booknest:
 
 volumes:
-  auth_data: {}
-  catalog_data: {}
-  search_data: {}
-  order_data: {}
-  payment_data: {}
-  library_data: {}
-  storage_uploads: {}
+  auth_data:
+  catalog_data:
+  search_data:
+  order_data:
+  payment_data:
+  library_data:
+  storage_uploads:
