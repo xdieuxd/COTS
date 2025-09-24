@@ -56,16 +56,18 @@
 		</dependency>
 
 		<!-- Spring Boot Starter Data JPA -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
 
 		<!-- Driver MySQL (nếu dùng MySQL) -->
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
+			<version>8.0.33</version> <!-- bản ổn định mới -->
 			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
 		<!-- Lombok (tùy chọn, nếu dùng @Getter/@Setter) -->
@@ -81,8 +83,12 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>com.booknest.order.OrderApplication</mainClass>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+
 
 </project>

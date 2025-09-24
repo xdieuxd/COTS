@@ -1,10 +1,10 @@
-# version: "3.9"
+version: "3.9"
 
 services:
   # Gateway
   gateway:
     build:
-      context: ..      # trỏ lên root project COTS
+      context: ..
       dockerfile: gateway/Dockerfile
     container_name: gateway
     ports:
@@ -109,6 +109,8 @@ services:
   order:
     build: ../services/order
     container_name: order
+    ports:
+    - "8083:8085"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-order:3306/don_hang_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
@@ -116,7 +118,7 @@ services:
     depends_on:
       - mysql-order
     networks:
-      - booknest
+      - infra_booknest
 
   mysql-order:
     image: mysql:8.0
@@ -127,7 +129,7 @@ services:
       - order_data:/var/lib/mysql
       - ../services/order/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
     networks:
-      - booknest
+      - infra_booknest
 
   # Payment Service
   payment:
@@ -157,6 +159,8 @@ services:
   library:
     build: ../services/library
     container_name: library
+    ports:
+    - "8087:8087"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-library:3306/thu_vien_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
@@ -164,7 +168,7 @@ services:
     depends_on:
       - mysql-library
     networks:
-      - booknest
+      - infra_booknest
 
   mysql-library:
     image: mysql:8.0
@@ -175,7 +179,7 @@ services:
       - library_data:/var/lib/mysql
       - ../services/library/src/main/resources/db/ddl:/docker-entrypoint-initdb.d
     networks:
-      - booknest
+      - infra_booknest
 
   # Frontend
   web-frontend:
@@ -190,6 +194,8 @@ services:
 
 networks:
   booknest:
+  infra_booknest:
+    external: true
 
 volumes:
   auth_data:

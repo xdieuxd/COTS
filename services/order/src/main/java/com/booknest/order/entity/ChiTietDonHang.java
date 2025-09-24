@@ -1,5 +1,6 @@
 package com.booknest.order.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
@@ -10,13 +11,11 @@ public class ChiTietDonHang {
     @EmbeddedId
     private ChiTietDonHangId id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("maDonHang")
     @JoinColumn(name = "ma_don_hang")
+    @JsonBackReference
     private DonHang donHang;
-
-    @Column(nullable = false)
-    private Long maSach;
 
     @Column(nullable = false)
     private Integer soLuong;
@@ -29,23 +28,56 @@ public class ChiTietDonHang {
     private LoaiSach loaiSach;
 
     // ====================== GETTERS & SETTERS ======================
-    public ChiTietDonHangId getId() { return id; }
-    public void setId(ChiTietDonHangId id) { this.id = id; }
+    public ChiTietDonHangId getId() {
+        return id;
+    }
 
-    public DonHang getDonHang() { return donHang; }
-    public void setDonHang(DonHang donHang) { this.donHang = donHang; }
+    public void setId(ChiTietDonHangId id) {
+        this.id = id;
+    }
 
-    public Long getMaSach() { return maSach; }
-    public void setMaSach(Long maSach) { this.maSach = maSach; }
+    public DonHang getDonHang() {
+        return donHang;
+    }
 
-    public Integer getSoLuong() { return soLuong; }
-    public void setSoLuong(Integer soLuong) { this.soLuong = soLuong; }
+    public void setDonHang(DonHang donHang) {
+        this.donHang = donHang;
+    }
 
-    public BigDecimal getDonGia() { return donGia; }
-    public void setDonGia(BigDecimal donGia) { this.donGia = donGia; }
+    public Integer getSoLuong() {
+        return soLuong;
+    }
 
-    public LoaiSach getLoaiSach() { return loaiSach; }
-    public void setLoaiSach(LoaiSach loaiSach) { this.loaiSach = loaiSach; }
+    public void setSoLuong(Integer soLuong) {
+        this.soLuong = soLuong;
+    }
+
+    public BigDecimal getDonGia() {
+        return donGia;
+    }
+
+    public void setDonGia(BigDecimal donGia) {
+        this.donGia = donGia;
+    }
+
+    public LoaiSach getLoaiSach() {
+        return loaiSach;
+    }
+
+    public void setLoaiSach(LoaiSach loaiSach) {
+        this.loaiSach = loaiSach;
+    }
+
+    // Lấy maSach từ EmbeddedId
+    public Long getMaSach() {
+        return id != null ? id.getMaSach() : null;
+    }
+
+    public void setMaSach(Long maSach) {
+        if (id == null)
+            id = new ChiTietDonHangId();
+        id.setMaSach(maSach);
+    }
 
     public enum LoaiSach {
         GIAY, PDF

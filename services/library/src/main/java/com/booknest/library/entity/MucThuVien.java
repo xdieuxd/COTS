@@ -9,7 +9,7 @@ public class MucThuVien {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // tự tạo ID nội bộ cho entity
+    private Long id;
 
     @Column(name = "ma_nguoi_dung", nullable = false)
     private Long maNguoiDung;
@@ -25,29 +25,66 @@ public class MucThuVien {
     private Boolean choPhepDocPdf = false;
 
     @Column(name = "ngay_them", nullable = false)
-    private LocalDateTime ngayThem = LocalDateTime.now();
+    private LocalDateTime ngayThem;
 
     public enum LoaiMuc {
         DA_MUA, YEU_THICH
     }
 
-    // standard getters and setters
+    // --- Getters và Setters ---
+    public Long getId() {
+        return id;
+    }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public Long getMaNguoiDung() { return maNguoiDung; }
-    public void setMaNguoiDung(Long maNguoiDung) { this.maNguoiDung = maNguoiDung; }
+    public Long getMaNguoiDung() {
+        return maNguoiDung;
+    }
 
-    public Long getMaSach() { return maSach; }
-    public void setMaSach(Long maSach) { this.maSach = maSach; }
+    public void setMaNguoiDung(Long maNguoiDung) {
+        this.maNguoiDung = maNguoiDung;
+    }
 
-    public LoaiMuc getLoaiMuc() { return loaiMuc; }
-    public void setLoaiMuc(LoaiMuc loaiMuc) { this.loaiMuc = loaiMuc; }
+    public Long getMaSach() {
+        return maSach;
+    }
 
-    public Boolean getChoPhepDocPdf() { return choPhepDocPdf; }
-    public void setChoPhepDocPdf(Boolean choPhepDocPdf) { this.choPhepDocPdf = choPhepDocPdf; }
+    public void setMaSach(Long maSach) {
+        this.maSach = maSach;
+    }
 
-    public LocalDateTime getNgayThem() { return ngayThem; }
-    public void setNgayThem(LocalDateTime ngayThem) { this.ngayThem = ngayThem; }
+    public LoaiMuc getLoaiMuc() {
+        return loaiMuc;
+    }
+
+    public void setLoaiMuc(LoaiMuc loaiMuc) {
+        this.loaiMuc = loaiMuc;
+    }
+
+    public Boolean getChoPhepDocPdf() {
+        return choPhepDocPdf;
+    }
+
+    public void setChoPhepDocPdf(Boolean choPhepDocPdf) {
+        this.choPhepDocPdf = choPhepDocPdf;
+    }
+
+    public LocalDateTime getNgayThem() {
+        return ngayThem;
+    }
+
+    public void setNgayThem(LocalDateTime ngayThem) {
+        this.ngayThem = ngayThem;
+    }
+
+    // --- Tự động set ngày thêm khi persist ---
+    @PrePersist
+    protected void onCreate() {
+        if (ngayThem == null) {
+            ngayThem = LocalDateTime.now();
+        }
+    }
 }

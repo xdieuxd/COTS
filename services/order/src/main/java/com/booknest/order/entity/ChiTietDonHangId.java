@@ -7,6 +7,8 @@ import java.util.Objects;
 @Embeddable
 public class ChiTietDonHangId implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private Long maDonHang;
     private Long maSach;
 
@@ -18,7 +20,7 @@ public class ChiTietDonHangId implements Serializable {
         this.maSach = maSach;
     }
 
-    // getters & setters
+    // ====================== GETTERS & SETTERS ======================
     public Long getMaDonHang() {
         return maDonHang;
     }
@@ -35,14 +37,16 @@ public class ChiTietDonHangId implements Serializable {
         this.maSach = maSach;
     }
 
+    // ====================== EQUALS & HASHCODE ======================
     @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (!(o instanceof ChiTietDonHangId))
+        if (o == null || getClass() != o.getClass())
             return false;
         ChiTietDonHangId that = (ChiTietDonHangId) o;
-        return maDonHang.equals(that.maDonHang) && maSach.equals(that.maSach);
+        return Objects.equals(maDonHang, that.maDonHang) &&
+                Objects.equals(maSach, that.maSach);
     }
 
     @Override

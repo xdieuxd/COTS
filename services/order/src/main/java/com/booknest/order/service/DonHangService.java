@@ -15,11 +15,13 @@ public class DonHangService {
         this.donHangRepository = donHangRepository;
     }
 
+    // ====================== CREATE ======================
     @Transactional
     public DonHang createOrder(DonHang donHang) {
         return donHangRepository.save(donHang);
     }
 
+    // ====================== READ ======================
     public List<DonHang> getAllOrders() {
         return donHangRepository.findAll();
     }
@@ -28,8 +30,19 @@ public class DonHangService {
         return donHangRepository.findById(id).orElse(null);
     }
 
+    // ====================== UPDATE ======================
     @Transactional
     public DonHang updateOrder(DonHang donHang) {
         return donHangRepository.save(donHang);
+    }
+
+    // ====================== DELETE ======================
+    @Transactional
+    public boolean deleteOrder(Long id) {
+        if (donHangRepository.existsById(id)) {
+            donHangRepository.deleteById(id);
+            return true;
+        }
+        return false; // không tìm thấy đơn hàng
     }
 }

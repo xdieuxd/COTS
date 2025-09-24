@@ -15,12 +15,13 @@ public class GioHang {
     @Column(nullable = false, unique = true)
     private Long maNguoiDung;
 
+    @Column(nullable = false)
     private LocalDateTime ngayTao = LocalDateTime.now();
 
     @OneToMany(mappedBy = "gioHang", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChiTietDonHang> chiTietGioHangs;
+    private List<ChiTietGioHang> chiTietGioHangs;
 
-    // getters & setters
+    // ================== GETTERS & SETTERS ==================
     public Long getMaGioHang() {
         return maGioHang;
     }
@@ -45,11 +46,11 @@ public class GioHang {
         this.ngayTao = ngayTao;
     }
 
-    public List<ChiTietDonHang> getChiTietGioHangs() {
+    public List<ChiTietGioHang> getChiTietGioHangs() {
         return chiTietGioHangs;
     }
 
-    public void setChiTietGioHangs(List<ChiTietDonHang> chiTietGioHangs) {
+    public void setChiTietGioHangs(List<ChiTietGioHang> chiTietGioHangs) {
         this.chiTietGioHangs = chiTietGioHangs;
     }
 }
