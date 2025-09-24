@@ -1,5 +1,6 @@
+# application.yml
 server:
-  port: 8086  
+  port: 8086
 spring:
   datasource:
     url: jdbc:mysql://mysql-auth:3306/xac_thuc_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
@@ -20,7 +21,7 @@ springdoc:
     path: /swagger-ui.html
 vnpay:
   pay-url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
-  return-url: "http://localhost:4200/payments/payment-callback"
+  return-url: http://localhost:8086/api/payments/vnpay_return
   tmn-code: "OMZF7JB7"
   secret-key: "J6S80U7KQ2LKSIK0Q8QJK6K8LVVGPUVD"
   api-url: "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction"

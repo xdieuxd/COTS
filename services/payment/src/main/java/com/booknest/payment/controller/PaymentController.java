@@ -1,10 +1,11 @@
 package com.booknest.payment.controller;
 
-import com.booknest.payment.entity.GiaoDichThanhToan;
+import com.booknest.payment.dto.PaymentResponse;
 import com.booknest.payment.service.PaymentService;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.Map;
 
 @RestController
@@ -17,24 +18,38 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
-    @PostMapping("/cod")
-    public GiaoDichThanhToan payByCod(@RequestBody Map<String, String> body) {
-        Long orderId = Long.parseLong(body.get("orderId"));
-        BigDecimal amount = new BigDecimal(body.get("amount"));
-        return paymentService.payByCod(orderId, amount);
+    // POST /payments/create_payment_url
+    @PostMapping("/create_payment_url")
+    public PaymentResponse createPaymentUrl(@RequestBody Map<String, Object> body) {
+        Long orderId = Long.valueOf(body.get("orderId").toString());
+        Long amount = Long.valueOf(body.get("amount").toString());
+        String bankCode = body.get("bankCode") != null ? body.get("bankCode").toString() : null;
+        String language = body.getOrDefault("language", "vn").toString();
+
+        return paymentService.createPaymentUrl(orderId, amount, bankCode, language);
     }
 
-    @PostMapping("/vnpay")
-    public String payByVnPay(@RequestBody Map<String, String> body) {
-        Long orderId = Long.parseLong(body.get("orderId"));
-        BigDecimal amount = new BigDecimal(body.get("amount"));
-        return paymentService.payByVnPay(orderId, amount);
+    // GET /payments/vnpay_return
+    @GetMapping("/vnpay_return")
+    public ResponseEntity<?> vnpayReturn(@RequestParam Map<String, String> params) {
+        System.out.println("=== VNPAY CALLBACK ===");
+        System.out.println("Params raw: " + params);
+
+        try {
+            Object result = paymentService.vnpayReturn(params);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "Internal Server Error",
+                    "message", e.getMessage(),
+                    "params", params));
+        }
     }
 
-    @PostMapping("/vnpay/callback")
-    public void vnPayCallback(@RequestBody Map<String, String> body) {
-        String txnRef = body.get("vnp_TxnRef");
-        boolean success = "00".equals(body.get("vnp_ResponseCode"));
-        paymentService.handleVnPayCallback(txnRef, success, body.toString());
+    // GET /payments/vnpay_ipn
+    @GetMapping("/vnpay_ipn")
+    public Object vnpayIpn(@RequestParam Map<String, String> params) {
+        return paymentService.vnpayIpn(params);
     }
 }

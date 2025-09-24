@@ -20,7 +20,7 @@ public class GiaoDichThanhToan {
     private CongThanhToan congThanhToan;
 
     @Column(nullable = false, unique = true)
-    private String maThamChieu; // txnRef
+    private String maThamChieu;
 
     @Column(nullable = false)
     private BigDecimal soTien;
@@ -28,38 +28,81 @@ public class GiaoDichThanhToan {
     @Enumerated(EnumType.STRING)
     private TrangThaiGiaoDich trangThai = TrangThaiGiaoDich.KHOI_TAO;
 
-    @Column(columnDefinition = "json")
+    @Column(columnDefinition = "text")
     private String duLieuWebhook;
 
     private LocalDateTime ngayTao = LocalDateTime.now();
 
-    // standard getters and setters...
+    public enum CongThanhToan {
+        MOCK, MOMO, PAYPAL, VNPAY, COD
+    }
 
-    public enum CongThanhToan { MOCK, MOMO, PAYPAL, VNPAY, COD }
-    public enum TrangThaiGiaoDich { KHOI_TAO, THANH_CONG, THAT_BAI }
+    public enum TrangThaiGiaoDich {
+        KHOI_TAO, THANH_CONG, THAT_BAI
+    }
 
-    // getters & setters
-    public Long getMaGiaoDich() { return maGiaoDich; }
-    public void setMaGiaoDich(Long maGiaoDich) { this.maGiaoDich = maGiaoDich; }
+    // Getters & setters ...
+    public Long getMaGiaoDich() {
+        return maGiaoDich;
+    }
 
-    public Long getMaDonHang() { return maDonHang; }
-    public void setMaDonHang(Long maDonHang) { this.maDonHang = maDonHang; }
+    public void setMaGiaoDich(Long maGiaoDich) {
+        this.maGiaoDich = maGiaoDich;
+    }
 
-    public CongThanhToan getCongThanhToan() { return congThanhToan; }
-    public void setCongThanhToan(CongThanhToan congThanhToan) { this.congThanhToan = congThanhToan; }
+    public Long getMaDonHang() {
+        return maDonHang;
+    }
 
-    public String getMaThamChieu() { return maThamChieu; }
-    public void setMaThamChieu(String maThamChieu) { this.maThamChieu = maThamChieu; }
+    public void setMaDonHang(Long maDonHang) {
+        this.maDonHang = maDonHang;
+    }
 
-    public BigDecimal getSoTien() { return soTien; }
-    public void setSoTien(BigDecimal soTien) { this.soTien = soTien; }
+    public CongThanhToan getCongThanhToan() {
+        return congThanhToan;
+    }
 
-    public TrangThaiGiaoDich getTrangThai() { return trangThai; }
-    public void setTrangThai(TrangThaiGiaoDich trangThai) { this.trangThai = trangThai; }
+    public void setCongThanhToan(CongThanhToan congThanhToan) {
+        this.congThanhToan = congThanhToan;
+    }
 
-    public String getDuLieuWebhook() { return duLieuWebhook; }
-    public void setDuLieuWebhook(String duLieuWebhook) { this.duLieuWebhook = duLieuWebhook; }
+    public String getMaThamChieu() {
+        return maThamChieu;
+    }
 
-    public LocalDateTime getNgayTao() { return ngayTao; }
-    public void setNgayTao(LocalDateTime ngayTao) { this.ngayTao = ngayTao; }
+    public void setMaThamChieu(String maThamChieu) {
+        this.maThamChieu = maThamChieu;
+    }
+
+    public BigDecimal getSoTien() {
+        return soTien;
+    }
+
+    public void setSoTien(BigDecimal soTien) {
+        this.soTien = soTien;
+    }
+
+    public TrangThaiGiaoDich getTrangThai() {
+        return trangThai;
+    }
+
+    public void setTrangThai(TrangThaiGiaoDich trangThai) {
+        this.trangThai = trangThai;
+    }
+
+    public String getDuLieuWebhook() {
+        return duLieuWebhook;
+    }
+
+    public void setDuLieuWebhook(String duLieuWebhook) {
+        this.duLieuWebhook = duLieuWebhook;
+    }
+
+    public LocalDateTime getNgayTao() {
+        return ngayTao;
+    }
+
+    public void setNgayTao(LocalDateTime ngayTao) {
+        this.ngayTao = ngayTao;
+    }
 }
