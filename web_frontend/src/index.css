@@ -1,1 +1,7 @@
+select {
+    max-height: 200px;
+    /* giới hạn độ cao */
+    overflow-y: auto;
+}
+
 @import "tailwindcss";
