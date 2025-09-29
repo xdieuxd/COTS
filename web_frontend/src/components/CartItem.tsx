@@ -1,17 +1,25 @@
 import { ItemCart } from '@mytypes/order';
+import { useState } from 'react';
 
 
 interface CartItemProps {
     data: ItemCart;
     deleteItem: (item: ItemCart) => void;
+    updateQty: (id: number, qty: number) => void;
+    updateChecked: (id: number) => void;
 }
 
-const CartItem: React.FC<CartItemProps> = ({ data, deleteItem }) => {
+const CartItem: React.FC<CartItemProps> = ({ data, deleteItem, updateQty, updateChecked }) => {
+
+
     return (
         <div className="w-7xl p-4 bg-white text-gray-900 shadow-sm grid grid-cols-5 items-center border border-gray-200 rounded-lg font-semibold text-sm mb-4">
             <div className="flex gap-1 items-center">
                 <div className={`flex items-center justify-center w-[20px] h-[20px] border text-center border-gray-300 cursor-pointer rounded-sm 
-                                            ${data.isChecked ? " bg-gray-900 text-white bg-" : "bg-white text-transparent"}`}>
+                                            ${data.isChecked ? " bg-gray-900 text-white bg-" : "bg-white text-transparent"}`}
+
+                    onClick={() => updateChecked(data.id)}
+                >
                     ✓
                 </div>
                 <div className="flex gap-2 items-center">
@@ -29,9 +37,13 @@ const CartItem: React.FC<CartItemProps> = ({ data, deleteItem }) => {
             </div>
 
             <div className="grid grid-cols-3 border border-gray-300 items-center max-w-[90px]">
-                <button className="cursor-pointer">-</button>
+                <button className="cursor-pointer"
+                    onClick={() => data.qty === 1 ? deleteItem(data) : updateQty(data.id, data.qty - 1)}
+                >-</button>
                 <span className="border-l border-r border-gray-300 text-center">{data.qty}</span>
-                <button className="cursor-pointer">+</button>
+                <button className="cursor-pointer"
+                    onClick={() => updateQty(data.id, data.qty + 1)}
+                >+</button>
             </div>
 
             <div className="flex gap-0.5">

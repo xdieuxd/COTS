@@ -14,7 +14,15 @@ export default function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [user, setUser] = useState<Profile | null>(null);
+  let [user, setUser] = useState<Profile | null>(null);
+
+  user = {
+    id: 2,
+    hoTen: "Nguyễn Đắc Hải",
+    email: "haine@gmail.com",
+    phone: "098989898",
+    roles: ["THANH_VIEN"],
+  }
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");

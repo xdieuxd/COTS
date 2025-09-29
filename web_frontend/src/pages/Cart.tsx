@@ -6,10 +6,13 @@ import ModelDeleteItemCart from '@components/ModelDeleteItemCart';
 import { useState, useEffect } from 'react';
 import { ItemCart } from '@mytypes/order';
 import { useNavigate } from 'react-router-dom';
+import ShowMessage from '@components/ShowMessage';
 
 interface CartItemProps {
     data: ItemCart;
     deleteItem: (item: ItemCart) => void;
+    updateQty: (id: number, qty: number) => void;
+    updateChecked: (id: number) => void;
 }
 const Cart = () => {
 
@@ -24,14 +27,37 @@ const Cart = () => {
     const qty = 2
 
     const [itemDelete, setItemDelete] = useState<ItemCart | null>(null);
+    const [showMessage, setShowMessage] = useState(false)
 
-    const cartLength: number = 1
-    const cart: ItemCart[] = [
-        { id: 1, name: "Lập trình Java cơ bản", price: 120000, qty: 1, img: "/images/img_book_default.jpg", isChecked: true },
-        { id: 2, name: "Cấu trúc dữ liệu & Giải thuật", price: 180000, qty: 2, img: "/images/img_book_default.jpg", isChecked: false },
-        { id: 3, name: "Trí tuệ nhân tạo", price: 250000, qty: 1, img: "/images/img_book_default.jpg", isChecked: true },
-    ];
 
+    // Khi khởi tạo state, load từ localStorage nếu có
+    const [cart, setCart] = useState<ItemCart[]>(() => {
+        const savedCart = localStorage.getItem("cart");
+        return savedCart ? JSON.parse(savedCart) : [
+            { id: 1, name: "Lập trình Java cơ bản", price: 120000, qty: 1, img: "/images/img_book_default.jpg", isChecked: true },
+            { id: 2, name: "Cấu trúc dữ liệu & Giải thuật", price: 180000, qty: 2, img: "/images/img_book_default.jpg", isChecked: false },
+            { id: 3, name: "Trí tuệ nhân tạo", price: 250000, qty: 1, img: "/images/img_book_default.jpg", isChecked: true },
+        ];
+    });
+
+    // Mỗi khi cart thay đổi, lưu vào localStorage
+    useEffect(() => {
+        localStorage.setItem("cart", JSON.stringify(cart));
+    }, [cart]);
+
+
+    const cartLength = cart.length
+    const updateQty = (id: number, qty: number) => {
+        setCart((prev: ItemCart[]) =>
+            prev.map(item => item.id === id ? { ...item, qty } : item)
+        )
+    }
+
+    const updateChecked = (id: number) => {
+        setCart((prev: ItemCart[]) =>
+            prev.map(item => item.id === id ? { ...item, isChecked: !item.isChecked } : item)
+        )
+    }
 
 
     const confirmDelete = (item: ItemCart) => {
@@ -41,14 +67,47 @@ const Cart = () => {
         setItemDelete(null)
     }
 
+    const allChecked = cart.every(item => item.isChecked);
+
+
+    const toggleCheckedAll = () => {
+        setCart(prev => prev.map(item => ({ ...item, isChecked: !allChecked })));
+    }
+
+    const isCheckedLength = cart.filter(item => item.isChecked).length
+
+
+
+
+
+
     const itemChecked = cart.filter(item => item.isChecked)
     const total_price = itemChecked.reduce((sum, item) => {
         return sum + item.price * item.qty;
     }, 0);
 
-    const buy = () => {
-        navigate("/checkout", { state: { items: itemChecked } });
+    const handleBuy = () => {
+        if (isCheckedLength === 0) {
+            setShowMessage(true);
+            setTimeout(() => {
+                setShowMessage(false);
+            }, 3000);
+        } else {
+
+            navigate("/checkout", { state: { items: itemChecked } });
+        }
     }
+
+    const handleDeleteAll = () => {
+        if (isCheckedLength === 0) {
+            setShowMessage(true);
+            setTimeout(() => {
+                setShowMessage(false);
+            }, 3000);
+        }
+    }
+
+
 
     return (
         <div className="w-full flex min-h-screen bg-gray-100 text-black dark:bg-gray-900 dark:text-white">
@@ -59,7 +118,7 @@ const Cart = () => {
                             <div className="w-7xl mx-auto text-2xl p-8 flex items-center gap-2 ">
                                 <FontAwesomeIcon icon={faShoppingCart} />
                                 <h1 className="">Giỏ hàng</h1>
-                                <span>(1) sản phẩm</span>
+                                <span>({cartLength}) sản phẩm</span>
                             </div>
                         </div>
 
@@ -68,7 +127,8 @@ const Cart = () => {
                                 <div className='flex gap-1'>
                                     <div
                                         className={`flex items-center justify-center w-[20px] h-[20px] border text-center border-gray-300 cursor-pointer rounded-sm 
-                                            ${checkedAll ? " bg-gray-900 text-white bg-" : "bg-white text-transparent"}`}
+                                            ${allChecked ? " bg-gray-900 text-white bg-" : "bg-white text-transparent"}`}
+                                        onClick={() => toggleCheckedAll()}
                                     >
                                         ✓
                                     </div>
@@ -82,7 +142,13 @@ const Cart = () => {
 
                             <div className='mt-8'>
                                 {cart.map((item) => (
-                                    <CartItem key={item.id} data={item} deleteItem={confirmDelete} />
+                                    <CartItem
+                                        key={item.id}
+                                        data={item}
+                                        deleteItem={confirmDelete}
+                                        updateQty={(id: number, qty: number) => updateQty(id, qty)}
+                                        updateChecked={(id: number) => updateChecked(id)}
+                                    />
                                 ))}
 
                             </div>
@@ -91,15 +157,20 @@ const Cart = () => {
                                 <div className='flex gap-2'>
                                     <div
                                         className={`flex items-center justify-center w-[20px] h-[20px] border text-center border-gray-300 cursor-pointer rounded-sm 
-                                            ${checkedAll ? " bg-gray-900 text-white dark:bg-white dark:text-gray-900" : "bg-white text-transparent"}`}
+                                            ${allChecked ? " bg-gray-900 text-white dark:bg-white dark:text-gray-900" : "bg-white text-transparent"}`}
+                                        onClick={() => toggleCheckedAll()}
                                     >
                                         ✓
                                     </div>
-                                    <span>chọn tất cả (2) sản phẩm </span>
-                                    <div className='cursor-pointer transition-all duration-300 hover:underline hover:-translate-y-1'>Xóa</div>
+                                    <span>chọn tất cả ({isCheckedLength}) sản phẩm </span>
+                                    <div className='cursor-pointer transition-all duration-300 hover:underline hover:-translate-y-1'
+                                        onClick={() => handleDeleteAll()}
+                                    >
+                                        Xóa
+                                    </div>
                                 </div>
                                 <div className='flex items-center gap-2'>
-                                    <span>Thanh toán (2) sản phẩm: </span>
+                                    <span>Thanh toán ({isCheckedLength}) sản phẩm: </span>
                                     <div className="flex gap-0.5 font-semibold text-xl">
                                         {total_price.toLocaleString("vi-EN")}
                                         <span className="underline font-thin text-xs">
@@ -109,7 +180,7 @@ const Cart = () => {
                                     <button className='px-16 py-2 bg-gray-800 text-white dark:bg-white dark:text-gray-900 font-bold text-xl rounded-sm
                                                         cursor-pointer transition-all duration-300 hover:-translate-y-1
                                                     '
-                                        onClick={() => buy()}
+                                        onClick={() => handleBuy()}
                                     >
                                         Thanh toán
                                     </button>
@@ -123,6 +194,8 @@ const Cart = () => {
                                 onCancel={() => setItemDelete(null)}
                             />
                         )}
+
+                        {showMessage && (<ShowMessage />)}
 
                     </div>
                 )

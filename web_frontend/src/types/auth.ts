@@ -11,5 +11,6 @@ export interface Profile {
   id: number;
   hoTen: string;
   email: string;
+  phone: string;
   roles: Role[];
 }

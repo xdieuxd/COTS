@@ -16,5 +16,13 @@ export default defineConfig({
       '@routes': path.resolve(__dirname, 'src/routes')
     },
   },
-  server: { port: 3000 },
+  server: {
+    port: 3000,
+    proxy: {
+      "/api": {
+        target: "http://localhost:8083",
+        changeOrigin: true,
+      },
+    },
+  },
 });

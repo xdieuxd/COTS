@@ -5,11 +5,16 @@ import { faLocationDot, faShoppingCart } from "@fortawesome/free-solid-svg-icons
 import CheckoutItem from "@components/CheckoutItem";
 import { useEffect, useState } from "react";
 import AddressPopup from "@components/AddressPopup";
+import { useAuth } from "@hooks/useAuth";
+import { toast } from "react-toastify";
+import { orderApi } from "@api/orderApi";
 
 const Checkout: React.FC = () => {
     useEffect(() => {
         document.title = "Thanh toán";
     }, []);
+
+    const { user } = useAuth()
 
     const { state } = useLocation();
     const { items = [] } = (state as { items: CheckoutData[] }) || {};
@@ -19,6 +24,30 @@ const Checkout: React.FC = () => {
     const [method, setMethod] = useState<"cod" | "bank">("bank");
 
     const total_price = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+    const handleOrder = async () => {
+        try {
+            const res = await orderApi.createOrder({
+                maNguoiDung: user?.id || 2,
+                tenNguoiNhan: addressData?.name || user?.hoTen || "",
+                sdtNguoiNhan: addressData?.phone || user?.phone || "",
+                diaChiNhan: addressData?.address || "Địa chỉ mặc định",
+                phuongThucThanhToan: method === "bank" ? "ONLINE" : "COD",
+                items: items.map((item) => ({
+                    maSach: item.id,
+                    soLuong: item.qty,
+                    donGia: item.price,
+                })),
+                tongTien: total_price,
+            });
+
+            toast.success("Đặt hàng thành công")
+            console.log("Tạo đơn thành công:", res.data);
+        } catch (err) {
+            toast.error("tạo đơn thất bại")
+            console.log(err)
+        }
+    }
 
     return (
         <div className="w-full flex min-h-screen bg-gray-100 text-black dark:bg-gray-900 dark:text-white">
@@ -41,8 +70,8 @@ const Checkout: React.FC = () => {
                         </div>
                         <div className="flex mt-4 items-center gap-4">
                             <div className="flex gap-2 font-bold text-lg">
-                                <span>{addressData?.name || "Nguyễn Đắc Hải"}</span>
-                                <span>{addressData?.phone || "0123456789"}</span>
+                                <span>{addressData?.name || user?.hoTen}</span>
+                                <span>{addressData?.phone || user?.phone}</span>
                             </div>
                             <span className="text-lg">
                                 {addressData?.address ||
@@ -91,8 +120,8 @@ const Checkout: React.FC = () => {
                                 <button
                                     onClick={() => setMethod("bank")}
                                     className={`border rounded py-1 px-4 transition ${method === "bank"
-                                            ? "border-orange-500 text-orange-600"
-                                            : "border-gray-300"
+                                        ? "border-orange-500 text-orange-600"
+                                        : "border-gray-300"
                                         }`}
                                 >
                                     Ngân hàng
@@ -100,8 +129,8 @@ const Checkout: React.FC = () => {
                                 <button
                                     onClick={() => setMethod("cod")}
                                     className={`border rounded py-1 px-4 transition ${method === "cod"
-                                            ? "border-orange-500 text-orange-600"
-                                            : "border-gray-300"
+                                        ? "border-orange-500 text-orange-600"
+                                        : "border-gray-300"
                                         }`}
                                 >
                                     Thanh toán khi nhận hàng
@@ -133,7 +162,9 @@ const Checkout: React.FC = () => {
                                 </div>
                             </div>
                             <div className="flex justify-end mt-4">
-                                <button className="bg-gray-900 text-white transition-all duration-300 hover:-translate-y-1 font-semibold py-2 px-12 rounded-sm cursor-pointer">
+                                <button className="bg-gray-900 text-white transition-all duration-300 hover:-translate-y-1 font-semibold py-2 px-12 rounded-sm cursor-pointer"
+                                    onClick={() => handleOrder()}
+                                >
                                     Đặt hàng
                                 </button>
                             </div>
